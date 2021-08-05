@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/bxcodec/go-clean-arch/domain"
+	"github.com/k3forx/clean-architecture-with-Golang/domain"
 )
 
 type articleUsecase struct {
@@ -17,7 +17,7 @@ type articleUsecase struct {
 }
 
 // NewArticleUsecase will create new an articleUsecase object representation of domain.ArticleUsecase interface
-func NewArticleUsecase(a domain.ArticleRepository, ar domain.AuthorRepository, timeout time.Duration) domain.ArticleUsecase {
+func NewArticleUsecase(a domain.ArticleRepository, ar domain.AuthorRepository, timeout time.Duration) domain.ArticleUseCase {
 	return &articleUsecase{
 		articleRepo:    a,
 		authorRepo:     ar,
@@ -37,7 +37,7 @@ func (a *articleUsecase) fillAuthorDetails(c context.Context, data []domain.Arti
 	mapAuthors := map[int64]domain.Author{}
 
 	for _, article := range data {
-		mapAuthors[article.Author.ID] = domain.Author{}
+		mapAuthors[article.Author.Id] = domain.Author{}
 	}
 	// Using goroutine to fetch the author's detail
 	chanAuthor := make(chan domain.Author)
@@ -64,7 +64,7 @@ func (a *articleUsecase) fillAuthorDetails(c context.Context, data []domain.Arti
 
 	for author := range chanAuthor {
 		if author != (domain.Author{}) {
-			mapAuthors[author.ID] = author
+			mapAuthors[author.Id] = author
 		}
 	}
 
@@ -74,7 +74,7 @@ func (a *articleUsecase) fillAuthorDetails(c context.Context, data []domain.Arti
 
 	// merge the author's data
 	for index, item := range data {
-		if a, ok := mapAuthors[item.Author.ID]; ok {
+		if a, ok := mapAuthors[item.Author.Id]; ok {
 			data[index].Author = a
 		}
 	}
@@ -110,7 +110,7 @@ func (a *articleUsecase) GetByID(c context.Context, id int64) (res domain.Articl
 		return
 	}
 
-	resAuthor, err := a.authorRepo.GetByID(ctx, res.Author.ID)
+	resAuthor, err := a.authorRepo.GetByID(ctx, res.Author.Id)
 	if err != nil {
 		return domain.Article{}, err
 	}
@@ -134,7 +134,7 @@ func (a *articleUsecase) GetByTitle(c context.Context, title string) (res domain
 		return
 	}
 
-	resAuthor, err := a.authorRepo.GetByID(ctx, res.Author.ID)
+	resAuthor, err := a.authorRepo.GetByID(ctx, res.Author.Id)
 	if err != nil {
 		return domain.Article{}, err
 	}

@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"time"
 
-	_articleRepo "github.com/bxcodec/go-clean-arch/article/repository/mysql"
-	_authorRepo "github.com/bxcodec/go-clean-arch/author/repository/mysql"
 	_ "github.com/go-sql-driver/mysql"
 	_articleHttpDelivery "github.com/k3forx/clean-architecture-with-Golang/article/delivery/http"
 	_articleHttpDeliveryMiddleware "github.com/k3forx/clean-architecture-with-Golang/article/delivery/http/middleware"
-	_articleUcase "github.com/k3forx/clean-archtitecture-with-Golang/article/usecase"
+	_articleRepo "github.com/k3forx/clean-architecture-with-Golang/article/repository/mysql"
+	_articleUsecase "github.com/k3forx/clean-architecture-with-Golang/article/usecase"
+	_authorRepo "github.com/k3forx/clean-architecture-with-Golang/author/repository/mysql"
 	"github.com/labstack/echo"
 	"github.com/spf13/viper"
 )
@@ -53,7 +53,7 @@ func main() {
 	ar := _articleRepo.NewMysqlArticleRepository(dbConn)
 
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
-	au := _articleUcase.NewArticleUsecase(ar, authorRepo, timeoutContext)
+	au := _articleUsecase.NewArticleUsecase(ar, authorRepo, timeoutContext)
 	_articleHttpDelivery.NewArticleHandler(e, au)
 
 	log.Fatal(e.Start(viper.GetString("server.address")))
